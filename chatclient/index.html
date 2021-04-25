@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+<script src="https://code.jquery.com/jquery-3.2.1.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script src="/socket.io/socket.io.js"></script>
+<div class="container">
+    <br>    
+    <div class="jumbotron">
+        <h1 class="display-4">Send Message</h1>
+        <br>
+        <input id="name" class="form-control" placeholder="Name">
+        <br>
+        <textarea id="message" class="form-control" placeholder="Message"></textarea>
+        <br>
+        <button id="send" class="btn btn-success">Send</button>
+    </div>
+
+    <div id="messages">
+
+    </div>
+</div>
+<script>
+    //this initalization will also try to make a connection
+    var socket= io()
+
+    //Shorthand notation of document ready funtion $()
+    //every time button is clicked new object is added/displayed in div 
+   //Document ready function
+    $(()=>{
+        $("#send").click(()=>{
+            var message={name: $("#name").val(),message: $("#message").val()}
+            postmessage(message)
+        })
+        
+        getmessage()
+    })
+
+    //event listener for socket.io
+    socket.on('message',addmsgs)
+
+    function addmsgs(message){
+        //using jquery we are injecting variables
+        //shorthand notation of jQuery id is taken from line 16 $("div id ")
+        $("#messages").append(`<h4> ${message.name} </h4> <p>${message.message}</p>`)
+
+    }
+
+    function getmessage(){
+        //Doing get request here to get the messages from backend and also setting callback to provide data
+        $.get('http://localhost:3000/messages',(data)=>{
+            console.log(data)
+            data.forEach(function(element){
+                addmsgs(element)
+            },this)
+            //as signature of callback function matches with addmsgs function
+            // we can also write data.forEach(addmsgs),hence it will be called directly
+        })
+    }
+
+    function postmessage(message){
+        //Doing post request here to post the new messages from backend and also setting callback to provide data
+        $.post('http://localhost:3000/messages',message)
+            
+    }
+</script>
