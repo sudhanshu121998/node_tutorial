@@ -14,7 +14,7 @@ var mongoose=require('mongoose')
 
 //preparing for usage of HTML file
 //express.static is used to serve static file and in that we are passing complete directory
-app.use(express.static(__dirname)) //used to serve the html file(here index.html)
+app.use(express.static(__dirname)) //used to serve the html(static content) file(here index.html)
 app.use(bodyParser.json()) //here bodyParser know that we expect json to be coming in with HTTP request
 app.use(bodyParser.urlencoded({extended:false})) // as values from browser are urlencoded,hence added boyparser to support that
 
